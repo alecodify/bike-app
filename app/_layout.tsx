@@ -1,39 +1,38 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { SplashScreen, Stack } from "expo-router";
+import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import { StripeProvider } from "@stripe/stripe-react-native";
+import { useFonts } from "expo-font";
+import { useEffect } from "react";
+import "./global.css";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+const publicKey: any = process.env.EXPO_PUBLIC_STRIPE_KEY
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false, 
+});
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+  const [fontsLoaded] = useFonts({
+    "Rubik-Bold": require("../assets/fonts/Rubik-Bold.ttf"),
+    "Rubik-ExtraBold": require("../assets/fonts/Rubik-ExtraBold.ttf"),
+    "Rubik-SemiBold": require("../assets/fonts/Rubik-SemiBold.ttf"),
+    "Rubik-Medium": require("../assets/fonts/Rubik-Medium.ttf"),
+    "Rubik-Regular": require("../assets/fonts/Rubik-Regular.ttf"),
+    "Rubik-Light": require("../assets/fonts/Rubik-Light.ttf"),
+  })
+  
+  useEffect(()=> {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync()
     }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+  },[fontsLoaded])
+  
+  if (!fontsLoaded) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <StripeProvider publishableKey={publicKey}>
+      <Stack screenOptions={{headerShown: false}} />
+    </StripeProvider>
   );
 }

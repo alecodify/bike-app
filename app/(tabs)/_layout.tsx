@@ -1,45 +1,82 @@
 import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useColorScheme } from 'react-native';
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
+const PageLayout = () => {
   const colorScheme = useColorScheme();
+  const activeColor = colorScheme === 'dark' ? '#ffffff' : '#32759c';
+  const inactiveColor = colorScheme === 'dark' ? '#7c7c7c' : '#b0b0b0';
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarStyle: {
+          backgroundColor: colorScheme === 'dark' ? '#000000' : '#ffffff',
+          borderTopWidth: 0,
+          height: 60,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+        },
+        tabBarActiveTintColor: activeColor,
+        tabBarInactiveTintColor: inactiveColor,
         headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
+      }}
+    >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? 'home' : 'home-outline'}
+              size={24}
+              color={focused ? activeColor : inactiveColor}
+            />
+          ),
         }}
       />
+
       <Tabs.Screen
-        name="explore"
+        name="shop"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'shopping' : 'shopping-outline'}
+              size={24}
+              color={focused ? activeColor : inactiveColor}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="wallet"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <MaterialCommunityIcons
+              name={focused ? 'wallet' : 'wallet-outline'}
+              size={24}
+              color={focused ? activeColor : inactiveColor}
+            />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name={focused ? 'person' : 'person-outline'}
+              size={24}
+              color={focused ? activeColor : inactiveColor}
+            />
+          ),
         }}
       />
     </Tabs>
-  );
+  )
 }
+
+export default PageLayout
